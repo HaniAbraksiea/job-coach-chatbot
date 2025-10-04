@@ -1,41 +1,38 @@
 # fetch_jobs.py
 import pandas as pd
-from embeddings import create_embeddings
-import faiss
-import numpy as np
+import requests
 
-def get_jobs(query, limit=5, use_dummy=True):
-    # Exempeldata (du kan ersätta med JobTech API senare)
-    data = {
-        "title": ["Python-utvecklare", "Data Scientist", "Frontend Developer"],
-        "company": ["Tech AB", "DataCorp", "WebDevX"],
-        "city": ["Stockholm", "Göteborg", "Malmö"],
-        "description": [
-            "Vi söker en Python-utvecklare med erfarenhet av webbutveckling.",
-            "Data Scientist som kan ML och analys av stora datamängder.",
-            "Frontend Developer med React/JS erfarenhet."
-        ]
+def get_jobs(query=None, limit=5):
+    """
+    Hämtar riktiga jobbannonser från JobTech API.
+    """
+
+    url = "https://jobsearch.api.jobtechdev.se/search"
+    params = {
+        "q": query if query else "",
+        "limit": limit
     }
+
+    try:
+        resp = requests.get(url, params=params)
+        resp.raise_for_status()
+        hits = resp.json().get("hits", [])
+    except Exception as e:
+        print("⚠️ Fel vid API-anrop:", e)
+        return pd.DataFrame([])
+
+    data = {
+        "title": [hit.get("headline", "Ingen titel") for hit in hits],
+        "company": [hit.get("employer", {}).get("name", "Ingen arbetsgivare") for hit in hits],
+        "city": [hit.get("workplace_address", {}).get("municipality", "Ingen ort") for hit in hits],
+        "description": [hit.get("description", {}).get("text", "Ingen beskrivning") for hit in hits],
+        "url": [hit.get("webpage_url", "#") for hit in hits]
+    }
+
     df = pd.DataFrame(data)
+    df['city'] = df['city'].fillna("Ingen ort")
+    return df
 
-    # Skapa embeddings (dummy nu)
-    df = create_embeddings(df, use_dummy=use_dummy)
-
-    # Bygg FAISS index
-    dimension = len(df['embedding'].iloc[0])
-    index = faiss.IndexFlatL2(dimension)
-    index.add(np.vstack(df['embedding'].values))
-
-    # Skapa embedding för frågan (dummy nu)
-    if use_dummy:
-        query_vec = np.random.rand(dimension)
-    else:
-        from embeddings import get_embedding
-        query_vec = get_embedding(query)
-
-    # Sök topp-N
-    D, I = index.search(np.array([query_vec]), k=limit)
-    return df.iloc[I[0]]
 
 
 # python fetch_jobs.py

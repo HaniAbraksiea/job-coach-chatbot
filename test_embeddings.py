@@ -1,8 +1,8 @@
 # test_embeddings.py
 import pandas as pd
-from embeddings import create_embeddings
+from embeddings import create_embeddings, get_embedding
 
-# Exempeldata för test
+# Testdata
 data = {
     "title": ["Python-utvecklare", "Data Scientist", "Frontend Developer"],
     "description": [
@@ -14,10 +14,14 @@ data = {
 
 df = pd.DataFrame(data)
 
-# Skapa embeddings med dummy
-df = create_embeddings(df, use_dummy=True)
+print("=== Test med Hugging Face embeddings ===")
+df_hf = create_embeddings(df.copy())
+print(df_hf[['title', 'embedding']].head())
 
-# Visa resultat
-print(df[['title', 'embedding']])
+# Testa embedding för en användarfråga
+query = "Jag kan Python och vill jobba med data"
+query_vec = get_embedding(query)
+print("\nEmbedding för användarfrågan:", query_vec[:5], "...")  # visa första 5 värden
+
 
 # python test_embeddings.py
