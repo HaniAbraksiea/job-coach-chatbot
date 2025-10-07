@@ -9,22 +9,23 @@ st.title("Jobbcoach Chatbot (RAG) — Prototype")
 # --- Användarinmatning ---
 user_input = st.text_input("Skriv din fråga om jobb (t.ex. 'Python'):")
 
-# Slider för antal annonser
+# --- Slider för antal annonser ---
 num_jobs = st.slider("Hur många annonser vill du hämta?", 5, 50, 10)
 
 # --- Hämta initiala annonser för att skapa stad-dropdown ---
+selected_city = "Alla städer"
 if user_input.strip():
-    initial_df = get_jobs(query=user_input, limit=100)  # hämta max 100 annonser för dropdown
+    initial_df = get_jobs(query=user_input, limit=100)  # max 100 för dropdown
     cities = sorted(initial_df['city'].dropna().unique())
     cities.insert(0, "Alla städer")
     selected_city = st.selectbox("Välj stad:", cities)
 
 # --- Sök-knapp ---
 if st.button("Sök") and user_input.strip():
-    st.write(f"🔍 Söker relevanta jobb för: {user_input} i {selected_city}")
+    st.write(f"🔍 Söker relevanta jobb för: '{user_input}' i '{selected_city}'")
 
-    # Hämta annonser
-    df = get_jobs(query=user_input, limit=num_jobs*2)  # hämta fler för att filtrering på stad inte ska ta bort resultat
+    # Hämta annonser (hämta fler för att filtrering inte ska ta bort resultat)
+    df = get_jobs(query=user_input, limit=num_jobs*2)
 
     if df.empty:
         st.error("Inga jobbannonser hittades.")
@@ -37,9 +38,9 @@ if st.button("Sök") and user_input.strip():
         df = df.head(num_jobs)
 
         if df.empty:
-            st.warning("Inga annonser hittades för den staden.")
+            st.warning(f"Inga annonser hittades för staden '{selected_city}'.")
         else:
-            # Skapa embeddings
+            # Skapa Hugging Face embeddings
             df = create_embeddings(df)
 
             # Embedding för användarfrågan
@@ -52,7 +53,30 @@ if st.button("Sök") and user_input.strip():
             df['similarity'] = df['embedding'].apply(lambda x: cosine_similarity(x, query_vec))
             df_sorted = df.sort_values(by='similarity', ascending=False)
 
-            # Visa resultat
+            # --- Generera naturligt RAG-svar ---
+            def generate_rag_answer(df_sorted, user_input, selected_city):
+                count = len(df_sorted)
+                if count == 0:
+                    return "Tyvärr hittade jag inga relevanta jobb för din fråga."
+                
+                city_text = f" i {selected_city}" if selected_city != "Alla städer" else ""
+                answer = f"Jag hittade {count} relevanta jobb för '{user_input}'{city_text}. "
+                answer += "Här är några exempel: "
+
+                examples = []
+                for _, row in df_sorted.head(3).iterrows():
+                    examples.append(f"{row['title']} på {row['company']} ({row['city']})")
+                
+                answer += "; ".join(examples) + "."
+                answer += " Vill du se fler detaljer om något av dessa jobb, klicka på länken under varje annons."
+                return answer
+
+            # --- Visa chatbot-svar ---
+            st.subheader("Chatbot-svar:")
+            rag_answer = generate_rag_answer(df_sorted, user_input, selected_city)
+            st.write(rag_answer)
+
+            # --- Visa resultat ---
             st.subheader("Mest relevanta jobb:")
             for _, row in df_sorted.iterrows():
                 st.markdown(f"**{row['title']}** — {row['company']} ({row['city']})")
@@ -61,6 +85,7 @@ if st.button("Sök") and user_input.strip():
                 if ad_url:
                     st.markdown(f"[📄 Läs mer här]({ad_url})")
                 st.write("---")
+
 
 
 
