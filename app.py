@@ -17,23 +17,6 @@ def load_skills():
             data = json.load(f)
             skills = set()
 
-# --- Slider för antal annonser ---
-num_jobs = st.slider("Hur många annonser vill du hämta?", 5, 50, 10)
-
-# --- Hämta initiala annonser för att skapa stad-dropdown ---
-selected_city = "Alla städer"
-if user_input.strip():
-    initial_df = get_jobs(query=user_input, limit=100)  # max 100 för dropdown
-    cities = sorted(initial_df['city'].dropna().unique())
-    cities.insert(0, "Alla städer")
-    selected_city = st.selectbox("Välj stad:", cities)
-
-# --- Sök-knapp ---
-if st.button("Sök") and user_input.strip():
-    st.write(f"🔍 Söker relevanta jobb för: '{user_input}' i '{selected_city}'")
-
-    # Hämta annonser (hämta fler för att filtrering inte ska ta bort resultat)
-    df = get_jobs(query=user_input, limit=num_jobs*2)
             # Hämta svenska etiketter ur olika JSON-format
             if "data" in data and "concepts" in data["data"]:
                 for item in data["data"]["concepts"]:
@@ -121,9 +104,6 @@ with col1:
         df = get_jobs(query=user_input, limit=num_jobs * 2)
 
         if df.empty:
-            st.warning(f"Inga annonser hittades för staden '{selected_city}'.")
-        else:
-            # Skapa Hugging Face embeddings
             st.error("Inga jobbannonser hittades.")
         else:
             df = df.head(num_jobs)
@@ -137,38 +117,6 @@ with col1:
             df_sorted = df.sort_values(by="similarity", ascending=False)
             st.session_state.df_sorted = df_sorted
 
-            # --- Generera naturligt RAG-svar ---
-            def generate_rag_answer(df_sorted, user_input, selected_city):
-                count = len(df_sorted)
-                if count == 0:
-                    return "Tyvärr hittade jag inga relevanta jobb för din fråga."
-                
-                city_text = f" i {selected_city}" if selected_city != "Alla städer" else ""
-                answer = f"Jag hittade {count} relevanta jobb för '{user_input}'{city_text}. "
-                answer += "Här är några exempel: "
-
-                examples = []
-                for _, row in df_sorted.head(3).iterrows():
-                    examples.append(f"{row['title']} på {row['company']} ({row['city']})")
-                
-                answer += "; ".join(examples) + "."
-                answer += " Vill du se fler detaljer om något av dessa jobb, klicka på länken under varje annons."
-                return answer
-
-            # --- Visa chatbot-svar ---
-            st.subheader("Chatbot-svar:")
-            rag_answer = generate_rag_answer(df_sorted, user_input, selected_city)
-            st.write(rag_answer)
-
-            # --- Visa resultat ---
-            st.subheader("Mest relevanta jobb:")
-            for _, row in df_sorted.iterrows():
-                st.markdown(f"**{row['title']}** — {row['company']} ({row['city']})")
-                st.write(row['description'][:200] + "…")
-                ad_url = row['url'] if 'url' in row and row['url'] else f"https://jobsearch.api.jobtechdev.se/ad/{row.get('adId','')}"
-                if ad_url:
-                    st.markdown(f"[📄 Läs mer här]({ad_url})")
-                st.write("---")
     # --- Stad-dropdown ---
     if not st.session_state.df_sorted.empty:
         cities = sorted(st.session_state.df_sorted["city"].dropna().unique())
