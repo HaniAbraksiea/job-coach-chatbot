@@ -1,11 +1,12 @@
 streamlit
 pandas
 numpy
+requests
 openai
-python-dotenv
 scikit-learn
 sentence-transformers
 transformers
 torch
+
 
 # pip install -r requirements.txt
