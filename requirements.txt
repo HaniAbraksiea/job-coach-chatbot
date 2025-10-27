@@ -2,11 +2,8 @@ streamlit
 pandas
 numpy
 requests
-openai
-scikit-learn
 sentence-transformers
-transformers
-torch
+torch==2.9.0+cpu
 
 
 # pip install -r requirements.txt
