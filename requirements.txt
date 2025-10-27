@@ -3,7 +3,7 @@ pandas
 numpy
 requests
 sentence-transformers
-torch==2.9.0+cpu
+torch==2.0.1
 
 
 # pip install -r requirements.txt
