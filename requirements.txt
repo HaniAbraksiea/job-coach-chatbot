@@ -4,6 +4,7 @@ numpy
 requests
 sentence-transformers
 torch==2.0.1
-
+flask
+gunicorn
 
 # pip install -r requirements.txt
