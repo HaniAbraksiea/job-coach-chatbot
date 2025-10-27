@@ -57,5 +57,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'jobcoach-chatbot'
-          resource-group: 'jobbcoach-rg'
+          resource-group-name: 'jobbcoach-rg'
           slot-name: 'Production'
