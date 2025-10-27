@@ -20,11 +20,9 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Upgrade pip and install dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m venv antenv
-          source antenv/bin/activate
           pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
       - name: Upload artifact for deployment jobs
@@ -58,7 +56,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: jobbcoach-chatbot
-          resource-group: jobbcoach-rg
-          slot-name: Production
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-name: 'jobcoach-chatbot'
+          resource-group: 'jobbcoach-rg'
+          slot-name: 'Production'
