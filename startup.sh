@@ -1,7 +1,9 @@
 #!/bin/bash
+echo "🔹 Starting Streamlit app inside Azure..."
 cd /home/site/wwwroot
-echo "Starting Streamlit app..."
-# Installera beroenden (för säkerhets skull)
-pip install -r requirements.txt
-# Starta appen på port 8000 (Azure kräver denna)
-streamlit run app.py --server.port 8000 --server.address 0.0.0.0
+
+# Installera beroenden (lokalt i användarens pip-cache)
+pip install --no-cache-dir --user -r requirements.txt
+
+# Kör appen
+~/.local/bin/streamlit run app.py --server.port 8000 --server.address 0.0.0.0

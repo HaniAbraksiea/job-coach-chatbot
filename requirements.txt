@@ -2,7 +2,7 @@ streamlit
 pandas
 numpy
 requests
-sentence-transformers
+sentence-transformers==2.2.2
 torch==2.0.1
 flask
 gunicorn
