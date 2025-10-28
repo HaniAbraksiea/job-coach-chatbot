@@ -130,7 +130,7 @@ def initialize_chat():
 col1, col2 = st.columns([0.75, 0.25])
 
 with col1:
-    st.title("💬 Jobbcoach Chatbot (RAG) 🤖")
+    st.title("💬 Jobbcoach Chatbot 🤖")
 
     user_input = st.text_input("📝 Skriv din fråga om jobb (t.ex. 'Data Science'):")
     num_jobs = st.slider("📊 Hur många annonser vill du hämta?", 5, 50, 10)
