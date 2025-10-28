@@ -2,9 +2,8 @@ streamlit
 pandas
 numpy
 requests
-sentence-transformers==2.2.2
-torch==2.0.1
-flask
-gunicorn
+sentence-transformers
+torch
+scikit-learn
 
 # pip install -r requirements.txt
