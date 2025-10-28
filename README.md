@@ -9,5 +9,9 @@ Appen hjälper dig att söka relevanta jobb, analysera platsannonser och ge råd
 ---
 
 ### ⚙️ Teknisk information
-- Byggd med: `Streamlit`, `Pandas`, `Sentence Transformers`, `Torch`
+- Projektet är byggt med:
+  **Streamlit** – för användargränssnittet  
+  **Sentence Transformers** – för språkmodell och semantisk sökning  
+  **Pandas** & **NumPy** – för datahantering  
+  **Requests** – för API-anrop och datahämtning
 - Körs direkt i webbläsaren via Streamlit Cloud.
