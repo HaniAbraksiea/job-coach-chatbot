@@ -132,7 +132,7 @@ col1, col2 = st.columns([0.75, 0.25])
 with col1:
     st.title("💬 Jobbcoach Chatbot 🤖")
 
-    user_input = st.text_input("👩‍💼 Jobbcoach Chatbot: Vad vill du jobba med? Du kan söka efter jobbtitel, ort eller företag (t.ex. 'Data Scientist i Stockholm'):")
+    user_input = st.text_input("👩‍💼 Vad vill du jobba med? Du kan söka efter jobbtitel, ort eller företag (t.ex. 'Data Scientist'):")
     num_jobs = st.slider("📊 Hur många annonser vill du hämta?", 5, 50, 10)
 
     if st.button("🔍 Sök") and user_input.strip():
