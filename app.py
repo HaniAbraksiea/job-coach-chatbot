@@ -166,7 +166,11 @@ with col1:
         city_text = f" i {selected_city}" if selected_city != "Alla städer 🌆" else ""
         examples = [f"{r['title']} på {r['company']} ({r['city']})" for _, r in df_display.head(3).iterrows()]
         st.subheader("🤖 Chatbot-svar:")
-        st.write(f"💬 Jag hittade {count} relevanta jobb för '{user_input}'{city_text}. Här är några exempel: {'; '.join(examples)}. Vill du se fler detaljer om något av dessa jobb, klicka på länken under varje annons.")
+        st.write(
+            f"💬 Jag hittade {count} relevanta jobb för '{user_input}'{city_text}. "
+            f"Här är några exempel: {'; '.join(examples)}.\n\n"
+            f"👉 Vill du se fler detaljer om något av dessa jobb? Klicka på länken under varje annons."
+            )
 
         st.subheader("📋 Mest relevanta jobb:")
         for _, row in df_display.iterrows():
