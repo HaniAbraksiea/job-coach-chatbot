@@ -8,7 +8,7 @@ from fetch_jobs import get_jobs
 from embeddings import create_embeddings, get_embedding
 from load_taxonomy import load_taxonomy
 
-st.set_page_config(page_title="💬 Jobbcoach Chatbot (RAG)", layout="wide")
+st.set_page_config(page_title="💬 Jobbcoach Chatbot", layout="wide")
 
 taxonomy, taxonomy_skill_set = load_taxonomy()
 
