@@ -9,7 +9,7 @@ Appen hjälper dig att söka relevanta jobb, analysera platsannonser och ge råd
 ---
 
 ### ⚙️ Teknisk information
-- Projektet är byggt med:
+- Projektet är byggt med://
   **Streamlit** – för användargränssnittet  
   **Sentence Transformers** – för språkmodell och semantisk sökning  
   **Pandas** & **NumPy** – för datahantering  
